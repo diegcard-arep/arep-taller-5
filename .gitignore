@@ -1,0 +1,22 @@
+# General
+.DS_Store
+dist/
+node_modules/
+*.log
+.env
+
+# Maven/Java
+target/
+*.iml
+.idea/
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# Docker
+**/.docker/**
+
+.env
