@@ -1,26 +1,7 @@
 version: '3.9'
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: arep_taller_5
-      MYSQL_ROOT_PASSWORD: 04zIbAit8tmvsGlb
-      MYSQL_USER: app
-      MYSQL_PASSWORD: app
-    ports:
-      - "3306:3306"
-    volumes:
-      - dbdata:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
   app:
     build: ./backend
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/arep_taller_5?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
