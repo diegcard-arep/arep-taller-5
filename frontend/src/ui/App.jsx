@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-const API = 'http://localhost:8080/api/properties'
+const API = '/api/properties'
 
 function validateProperty(p) {
   const errors = {}
