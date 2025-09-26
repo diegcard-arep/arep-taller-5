@@ -102,3 +102,6 @@ Requisitos: Java 17, Maven, Node 18+, Docker Desktop.
 - Añadir pruebas con H2.
 - Pipeline CI/CD (GitHub Actions) para build y despliegue.
 - Capturas de pantalla y video de la app funcionando y del despliegue.
+
+
+Video de implementacion: https://youtu.be/6f4BoBsoFVM
