@@ -1,107 +1,456 @@
-# CRUD de Propiedades (Spring Boot + React + MySQL)
+# 🏢 CRUD de Propiedades - Taller #5 AREP
 
-Aplicación full-stack para administrar propiedades inmobiliarias con API REST en Spring Boot, base de datos MySQL y frontend en React usando Vite. Incluye paginación, filtros de búsqueda, validación del lado del cliente y manejo de errores.
+**Autor:** Diego Cárdenas  
+**Programa:** Arquitecturas Empresariales (AREP)  
+**Taller:** #5  
 
-## Arquitectura
+Aplicación full-stack para administrar propiedades inmobiliarias desarrollada con Spring Boot, React y MySQL. Implementa operaciones CRUD completas con API REST, interfaz web moderna, paginación, filtros de búsqueda, validación de datos y manejo robusto de errores.
 
-- Backend: Spring Boot 3.3.x, Spring Web, Spring Data JPA, Bean Validation (Jakarta), MySQL Connector/J.
-- Frontend: React 18 + Vite 5.
-- Base de datos: MySQL 8.
-- Contenedores: Docker y docker-compose para entorno local.
-- Despliegue: EC2 para backend y RDS MySQL para base de datos (servidores separados en AWS).
+## 🔗 Enlaces Importantes
 
-Estructura del repo:
+- **Video demostración:** <https://youtu.be/6f4BoBsoFVM>
+- **Aplicación desplegada en AWS:** [Enlace al despliegue]
 
-- `backend/`: API REST, JPA, Dockerfile.
-- `frontend/`: SPA React (desarrollo con Vite; build se copia a `backend/src/main/resources/static`).
-- `docker-compose.yml`: orquesta MySQL y la app para desarrollo local.
+## 📋 Tabla de Contenidos
 
-## API (resumen)
+- [Arquitectura del Sistema](#️-arquitectura-del-sistema)
+- [Tecnologías Utilizadas](#️-tecnologías-utilizadas)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
+- [Modelo de Datos](#️-modelo-de-datos)
+- [API REST](#-api-rest)
+- [Componentes Frontend](#️-componentes-frontend)
+- [Instalación y Ejecución](#-instalación-y-ejecución)
+- [Despliegue en AWS](#️-despliegue-en-aws)
+- [Scripts de Base de Datos](#️-scripts-de-base-de-datos)
 
-Base path: `/api/properties`
+## 🏗️ Arquitectura del Sistema
 
-- POST `/` crea una propiedad
-- GET `/` lista paginada con filtros (address, minPrice, maxPrice, minSize, maxSize, pageable)
-- GET `/{id}` obtiene por id
-- PUT `/{id}` actualiza por id
-- DELETE `/{id}` elimina por id
+La aplicación sigue una arquitectura de **tres capas** con separación clara de responsabilidades:
 
-Respuestas de validación devuelven errores por campo; errores no manejados devuelven 500 con mensaje.
+```text
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   PRESENTACIÓN  │    │      LÓGICA     │    │      DATOS      │
+│                 │    │    DE NEGOCIO   │    │                 │
+│ Frontend React  │◄──►│ Spring Boot API │◄──►│   MySQL RDS     │
+│    (Vite)       │    │      (REST)     │    │   (Persistencia)│
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
 
-## Modelo de datos (tabla `properties`)
+### Componentes Principales
 
-- id (BIGINT, PK, autoincrement)
-- address (VARCHAR 255, NOT NULL)
-- price (DECIMAL(15,2), NOT NULL)
-- size (INT, NOT NULL)
-- description (TEXT)
+1. **Frontend (React + Vite)**
+   - Single Page Application (SPA)
+   - Interfaz de usuario responsiva
+   - Validación del lado del cliente
+   - Comunicación con API REST
 
-Índices en `address`, `price`, `size` (ver `backend/src/main/resources/schema.sql`).
+2. **Backend (Spring Boot)**
+   - API REST con endpoints CRUD
+   - Validación de datos con Jakarta Bean Validation
+   - Persistencia con Spring Data JPA
+   - Manejo centralizado de excepciones
 
-## Desarrollo local
+3. **Base de Datos (MySQL)**
+   - Almacenamiento persistente
+   - Índices optimizados para consultas
+   - Esquema relacional normalizado
 
-Requisitos: Java 17, Maven, Node 18+, Docker Desktop.
+## 🛠️ Tecnologías Utilizadas
 
-1. Backend (arranque directo)
+### Backend
 
-- Configurar variables (si no usas docker-compose):
-  - `SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/properties?createDatabaseIfNotExist=true&serverTimezone=UTC`
-  - `SPRING_DATASOURCE_USERNAME=root`
-  - `SPRING_DATASOURCE_PASSWORD=yourpass`
-- En la carpeta `backend/`, compilar y arrancar con tu IDE o Maven.
+- **Java 21** - Lenguaje de programación
+- **Spring Boot 3.3.13** - Framework principal
+- **Spring Web** - Desarrollo de API REST
+- **Spring Data JPA** - Persistencia de datos
+- **Jakarta Bean Validation** - Validación de datos
+- **MySQL Connector/J** - Driver de base de datos
+- **Maven** - Gestión de dependencias
 
-1. Frontend (dev server)
+### Frontend
 
-- En `frontend/`:
-  - `npm install`
-  - `npm run dev`
-- El proxy de Vite redirige `/api` a `http://localhost:8080`.
+- **React 18.3.1** - Biblioteca de interfaz de usuario
+- **Vite 5.4.6** - Herramienta de construcción y desarrollo
+- **JavaScript (ES6+)** - Lenguaje de programación
+- **HTML5 & CSS3** - Marcado y estilos
 
-1. Local con Docker Compose (recomendado)
+### Infraestructura
 
-- En la raíz del repo:
-  - `docker compose up --build`
-- Levanta MySQL y la app en 8080. El frontend en producción se sirve desde Spring en `/`.
+- **MySQL 8** - Sistema de gestión de base de datos
+- **Docker** - Contenedorización
+- **AWS EC2** - Servidor de aplicación
+- **AWS RDS** - Base de datos en la nube
 
-## Build de producción del frontend
+## 📁 Estructura del Proyecto
 
-- En `frontend/` ejecutar `npm run build`.
-- Copia los assets a `backend/src/main/resources/static`.
-- Empaquetar backend con Maven y ejecutar el JAR resultante.
+```text
+arep-taller-5/
+├── backend/                              # Aplicación Spring Boot
+│   ├── src/main/java/com/arep/properties/
+│   │   ├── PropertiesApplication.java    # Clase principal Spring Boot
+│   │   ├── controller/
+│   │   │   └── PropertyController.java   # Controlador REST
+│   │   ├── service/
+│   │   │   └── PropertyService.java      # Lógica de negocio
+│   │   ├── repository/
+│   │   │   └── PropertyRepository.java   # Acceso a datos
+│   │   ├── model/
+│   │   │   └── Property.java            # Entidad JPA
+│   │   └── exception/
+│   │       └── GlobalExceptionHandler.java # Manejo de excepciones
+│   ├── src/main/resources/
+│   │   ├── application.properties        # Configuración Spring
+│   │   ├── schema.sql                   # Script DDL de referencia
+│   │   └── static/                      # Recursos estáticos (build React)
+│   ├── Dockerfile                       # Imagen Docker
+│   └── pom.xml                         # Dependencias Maven
+├── frontend/                           # Aplicación React
+│   ├── src/
+│   │   ├── main.jsx                    # Punto de entrada React
+│   │   └── ui/
+│   │       └── App.jsx                 # Componente principal
+│   ├── package.json                    # Dependencias npm
+│   └── vite.config.js                 # Configuración Vite
+├── docker-compose.yml                  # Orquestación de servicios
+└── README.md                          # Documentación
+```
 
-## Despliegue en AWS (servidores separados)
+## 🗃️ Modelo de Datos
 
-1. Base de datos (RDS MySQL)
+### Entidad Property
 
-- Crear instancia RDS MySQL 8.
-- Habilitar acceso desde el SG del backend (puerto 3306).
-- Anotar endpoint, usuario y contraseña.
+La aplicación maneja una única entidad principal que representa las propiedades inmobiliarias:
 
-1. Backend (EC2)
+```java
+@Entity
+@Table(name = "properties")
+public class Property {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;                    // ID único autoincremental
+    
+    @NotBlank
+    @Column(nullable = false)
+    private String address;             // Dirección (requerida)
+    
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
+    @Digits(integer = 15, fraction = 2)
+    private BigDecimal price;           // Precio (requerido, > 0)
+    
+    @NotNull
+    @Min(1)
+    private Integer size;               // Tamaño en m² (requerido, > 0)
+    
+    @Column(columnDefinition = "TEXT")
+    private String description;         // Descripción (opcional)
+}
+```
 
-- Crear instancia EC2 (Amazon Linux 2 o Ubuntu) con SG que permita 80/8080 desde Internet.
-- Instalar Docker y docker-compose.
-- Construir imagen y ejecutar contenedor pasando variables de entorno:
-  - `SPRING_DATASOURCE_URL=jdbc:mysql://<rds-endpoint>:3306/properties?createDatabaseIfNotExist=true&serverTimezone=UTC`
-  - `SPRING_DATASOURCE_USERNAME=<user>`
-  - `SPRING_DATASOURCE_PASSWORD=<pass>`
+### Esquema de Base de Datos
 
-1. Variables y seguridad
+```sql
+CREATE TABLE properties (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    address VARCHAR(255) NOT NULL,
+    price DECIMAL(15,2) NOT NULL,
+    size INT NOT NULL,
+    description TEXT
+);
 
-- Asegurar reglas SG: EC2 expone 80/8080 (HTTP); RDS sólo acepta desde SG/privado del backend.
-- Considerar TLS con ALB/Cert Manager.
+-- Índices para optimizar consultas
+CREATE INDEX idx_properties_address ON properties(address);
+CREATE INDEX idx_properties_price ON properties(price);
+CREATE INDEX idx_properties_size ON properties(size);
+```
 
-## Notas
+## 🔌 API REST
 
-- Paginación y filtros implementados en el servicio usando Specifications.
-- Validación de formulario en el cliente y manejo de errores con mensajes amigables.
-- Sin Lombok para evitar dependencias en annotation processors.
+### Base Path: `/api/properties`
 
-## Próximos pasos (opcionales)
+| Método | Endpoint | Descripción | Parámetros |
+|--------|----------|-------------|------------|
+| POST | `/` | Crear propiedad | Body: Property JSON |
+| GET | `/` | Listar propiedades | Query: address, minPrice, maxPrice, minSize, maxSize, page, size |
+| GET | `/{id}` | Obtener por ID | Path: id |
+| PUT | `/{id}` | Actualizar propiedad | Path: id, Body: Property JSON |
+| DELETE | `/{id}` | Eliminar propiedad | Path: id |
 
-- Añadir pruebas con H2.
-- Pipeline CI/CD (GitHub Actions) para build y despliegue.
-- Capturas de pantalla y video de la app funcionando y del despliegue.
+### Ejemplos de Uso
 
+#### Crear una propiedad
 
-Video de implementacion: https://youtu.be/6f4BoBsoFVM
+```bash
+POST /api/properties
+Content-Type: application/json
+
+{
+    "address": "Calle 123 #45-67",
+    "price": 250000000,
+    "size": 120,
+    "description": "Hermosa casa con jardín"
+}
+```
+
+#### Listar propiedades con filtros
+
+```bash
+GET /api/properties?address=calle&minPrice=100000000&maxPrice=300000000&page=0&size=10
+```
+
+### Códigos de Respuesta
+
+- **200 OK** - Operación exitosa
+- **201 CREATED** - Recurso creado exitosamente
+- **204 NO CONTENT** - Eliminación exitosa
+- **400 BAD REQUEST** - Datos de entrada inválidos
+- **404 NOT FOUND** - Recurso no encontrado
+- **500 INTERNAL SERVER ERROR** - Error interno del servidor
+
+## ⚛️ Componentes Frontend
+
+### Estructura de Componentes
+
+```javascript
+App.jsx                     // Componente raíz
+├── PropertyForm           // Formulario crear/editar
+├── PropertyList          // Lista paginada de propiedades
+├── PropertyCard          // Tarjeta individual de propiedad
+├── SearchFilters         // Filtros de búsqueda
+└── Pagination           // Controles de paginación
+```
+
+### Características del Frontend
+
+1. **Validación en Tiempo Real**
+   - Validación de campos requeridos
+   - Validación de tipos de datos
+   - Mensajes de error descriptivos
+
+2. **Interfaz Responsiva**
+   - Diseño adaptable a diferentes dispositivos
+   - Grid CSS para layouts flexibles
+   - Componentes reutilizables
+
+3. **Gestión de Estado**
+   - Hooks de React (useState, useEffect)
+   - Estado local para formularios
+   - Sincronización con API
+
+## 🚀 Instalación y Ejecución
+
+### Prerrequisitos
+
+- **Java 21** o superior
+- **Node.js 18+** y npm
+- **Maven 3.8+**
+- **MySQL 8** (local) o **Docker**
+
+### Opción 1: Desarrollo Local (Recomendado)
+
+#### 1. Clonar el repositorio
+
+```bash
+git clone <repository-url>
+cd arep-taller-5
+```
+
+#### 2. Ejecutar con Docker Compose
+
+```bash
+# Crear archivo .env con variables de entorno
+echo "SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/arep_taller_5?createDatabaseIfNotExist=true&serverTimezone=UTC" > .env
+echo "SPRING_DATASOURCE_USERNAME=root" >> .env
+echo "SPRING_DATASOURCE_PASSWORD=yourpassword" >> .env
+
+# Levantar servicios
+docker-compose up --build
+```
+
+#### 3. Acceder a la aplicación
+
+- **Frontend:** <http://localhost:8080>
+- **API:** <http://localhost:8080/api/properties>
+
+### Opción 2: Desarrollo Separado
+
+#### Backend para desarrollo
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+#### Frontend para desarrollo
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Opción 3: Build de Producción
+
+#### 1. Construir frontend
+
+```bash
+cd frontend
+npm run build
+cp -r dist/* ../backend/src/main/resources/static/
+```
+
+#### 2. Construir backend
+
+```bash
+cd backend
+mvn clean package -DskipTests
+java -jar target/properties-app-0.0.1-SNAPSHOT.jar
+```
+
+## ☁️ Despliegue en AWS
+
+### Arquitectura de Despliegue
+
+```text
+Internet → ALB → EC2 (Spring Boot) → RDS MySQL
+                    ↓
+               CloudWatch Logs
+```
+
+### 1. Base de Datos (RDS MySQL)
+
+```bash
+# Crear instancia RDS
+aws rds create-db-instance \
+    --db-instance-identifier arep-properties-db \
+    --db-instance-class db.t3.micro \
+    --engine mysql \
+    --master-username admin \
+    --master-user-password <secure-password> \
+    --allocated-storage 20 \
+    --vpc-security-group-ids sg-xxxxxxxx \
+    --db-name arep_taller_5
+```
+
+### 2. Servidor de Aplicación (EC2)
+
+#### Script de instalación en EC2
+
+```bash
+#!/bin/bash
+# Instalar Docker
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+
+# Instalar Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Clonar repositorio
+git clone <repository-url>
+cd arep-taller-5
+
+# Configurar variables de entorno
+cat << EOF > .env
+SPRING_DATASOURCE_URL=jdbc:mysql://<rds-endpoint>:3306/arep_taller_5?createDatabaseIfNotExist=true&serverTimezone=UTC
+SPRING_DATASOURCE_USERNAME=admin
+SPRING_DATASOURCE_PASSWORD=<secure-password>
+EOF
+
+# Levantar aplicación
+docker-compose up -d --build
+```
+
+### 3. Configuración de Seguridad
+
+#### Security Groups
+
+```bash
+# Backend Security Group
+aws ec2 create-security-group \
+    --group-name arep-backend-sg \
+    --description "Security group for AREP backend"
+
+# Permitir HTTP
+aws ec2 authorize-security-group-ingress \
+    --group-id sg-xxxxxxxx \
+    --protocol tcp \
+    --port 80 \
+    --cidr 0.0.0.0/0
+
+# Permitir puerto 8080
+aws ec2 authorize-security-group-ingress \
+    --group-id sg-xxxxxxxx \
+    --protocol tcp \
+    --port 8080 \
+    --cidr 0.0.0.0/0
+```
+
+## 🗄️ Scripts de Base de Datos
+
+### Script de Creación de Tabla
+
+```sql
+-- Script para crear la tabla de propiedades
+-- Este script se ejecuta automáticamente por Hibernate con ddl-auto=update
+
+CREATE TABLE IF NOT EXISTS properties (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    address VARCHAR(255) NOT NULL,
+    price DECIMAL(15,2) NOT NULL,
+    size INT NOT NULL,
+    description TEXT,
+    PRIMARY KEY (id)
+);
+
+-- Índices para optimizar rendimiento de consultas
+CREATE INDEX IF NOT EXISTS idx_properties_address ON properties(address);
+CREATE INDEX IF NOT EXISTS idx_properties_price ON properties(price);
+CREATE INDEX IF NOT EXISTS idx_properties_size ON properties(size);
+
+-- Datos de prueba (opcional)
+INSERT INTO properties (address, price, size, description) VALUES
+('Calle 123 #45-67, Bogotá', 250000000.00, 120, 'Casa moderna con jardín y garaje'),
+('Carrera 15 #30-20, Medellín', 180000000.00, 85, 'Apartamento en zona residencial'),
+('Avenida 68 #40-15, Bogotá', 320000000.00, 150, 'Casa esquinera con terraza'),
+('Calle 10 #25-30, Cali', 150000000.00, 75, 'Apartamento cerca al centro'),
+('Transversal 20 #12-45, Cartagena', 280000000.00, 110, 'Casa con vista al mar');
+```
+
+### Script de Configuración de Usuario
+
+```sql
+-- Crear usuario específico para la aplicación
+CREATE USER IF NOT EXISTS 'arep_user'@'%' IDENTIFIED BY 'arep_password_2024';
+
+-- Otorgar permisos necesarios
+GRANT SELECT, INSERT, UPDATE, DELETE ON arep_taller_5.* TO 'arep_user'@'%';
+GRANT CREATE, ALTER, INDEX ON arep_taller_5.* TO 'arep_user'@'%';
+
+-- Aplicar cambios
+FLUSH PRIVILEGES;
+
+-- Verificar permisos
+SHOW GRANTS FOR 'arep_user'@'%';
+```
+
+## ✅ Funcionalidades Implementadas
+
+- ✅ **CRUD Completo** - Crear, leer, actualizar y eliminar propiedades
+- ✅ **API REST** - Endpoints RESTful con códigos de estado HTTP apropiados
+- ✅ **Validación de Datos** - Validación en frontend y backend
+- ✅ **Paginación** - Lista paginada con controles de navegación
+- ✅ **Filtros de Búsqueda** - Búsqueda por dirección, precio y tamaño
+- ✅ **Manejo de Errores** - Mensajes de error amigables al usuario
+- ✅ **Interfaz Responsiva** - Diseño adaptable a diferentes dispositivos
+- ✅ **Contenedorización** - Aplicación dockerizada para fácil despliegue
+- ✅ **Despliegue en AWS** - Infraestructura en la nube con RDS y EC2
+
+---
+
+**Desarrollado por:** Diego Cárdenas  
+**Universidad:** Escuela Colombiana de Ingeniería Julio Garavito  
+**Materia:** Arquitecturas Empresariales (AREP)  
+**Año:** 2024
