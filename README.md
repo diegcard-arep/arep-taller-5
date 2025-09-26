@@ -11,6 +11,20 @@ Aplicación full-stack para administrar propiedades inmobiliarias desarrollada c
 - **Video demostración:** <https://youtu.be/6f4BoBsoFVM>
 - **Aplicación desplegada en AWS:** [Enlace al despliegue]
 
+## 📸 Capturas del Despliegue
+
+### Aplicación Web Funcionando
+![Aplicación Web](img/webpage.png)
+*Interfaz web de la aplicación CRUD de propiedades desplegada en AWS*
+
+### Instancia EC2 en AWS
+![Instancia EC2](img/ec2-instance.png)
+*Servidor EC2 donde está desplegada la aplicación Spring Boot*
+
+### Base de Datos Aurora RDS
+![Aurora RDS](img/aurora-rds.png)
+*Base de datos MySQL en AWS RDS para persistencia de datos*
+
 ## 📋 Tabla de Contenidos
 
 - [Arquitectura del Sistema](#️-arquitectura-del-sistema)
@@ -309,6 +323,25 @@ java -jar target/properties-app-0.0.1-SNAPSHOT.jar
 
 ## ☁️ Despliegue en AWS
 
+### 📷 Evidencias del Despliegue
+
+La aplicación ha sido exitosamente desplegada en AWS utilizando los siguientes servicios:
+
+#### Instancia EC2
+
+![Instancia EC2](img/ec2-instance.png)
+*Servidor EC2 configurado con Docker ejecutando la aplicación Spring Boot*
+
+#### Base de Datos RDS Aurora
+
+![Aurora RDS](img/aurora-rds.png)
+*Base de datos MySQL Aurora RDS configurada para la persistencia*
+
+#### Aplicación en Funcionamiento
+
+![Aplicación Web](img/webpage.png)
+*Interfaz web completamente funcional con operaciones CRUD*
+
 ### Arquitectura de Despliegue
 
 ```text
@@ -453,4 +486,5 @@ SHOW GRANTS FOR 'arep_user'@'%';
 **Desarrollado por:** Diego Cárdenas  
 **Universidad:** Escuela Colombiana de Ingeniería Julio Garavito  
 **Materia:** Arquitecturas Empresariales (AREP)  
-**Año:** 2024
+**Año:** 2024 
+ 
