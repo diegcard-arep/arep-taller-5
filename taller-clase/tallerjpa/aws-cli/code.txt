@@ -1,0 +1,179 @@
+AWS
+
+{
+    "GroupId": "sg-092e0a16ae764a97b",
+    "SecurityGroupArn": "arn:aws:ec2:us-east-1:767398043565:security-group/sg-092e0a16ae764a97b"
+}
+
+
+C:\Users\diego\.aws>aws ec2 authorize-security-group-ingress --group-id sg-092e0a16ae764a97b --protocol tcp --port 3389 --cidr 0.0.0.0/0
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0aa0eb86b1d6bf33c",
+            "GroupId": "sg-092e0a16ae764a97b",
+            "GroupOwnerId": "767398043565",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 3389,
+            "ToPort": 3389,
+            "CidrIpv4": "0.0.0.0/0",
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:767398043565:security-group-rule/sgr-0aa0eb86b1d6bf33c"
+        }
+    ]
+}
+
+C:\Users\diego\.aws>aws ec2 authorize-security-group-ingress --group-id sg-092e0a16ae764a97b --protocol tcp --port 22 --cidr 0.0.0.0/0
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0d0134fb8cc1e4d36",
+            "GroupId": "sg-092e0a16ae764a97b",
+            "GroupOwnerId": "767398043565",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIpv4": "0.0.0.0/0",
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:767398043565:security-group-rule/sgr-0d0134fb8cc1e4d36"
+        }
+    ]
+}
+
+
+aws ec2 run-instances --image-id ami-0b09ffb6d8b58ca91 --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-092e0a16ae764a97b --subnet-id subnet-068891e9a8dcf511c
+
+
+C:\Users\diego\.aws>aws ec2 run-instances --image-id ami-0b09ffb6d8b58ca91 --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-092e0a16ae764a97b --subnet-id subnet-068891e9a8dcf511c
+{
+    "ReservationId": "r-0932d2ca746a77b9c",
+    "OwnerId": "767398043565",
+    "Groups": [],
+    "Instances": [
+        {
+            "Architecture": "x86_64",
+            "BlockDeviceMappings": [],
+            "ClientToken": "b95e170f-7059-4759-9f77-950c0732e5dc",
+            "EbsOptimized": false,
+            "EnaSupport": true,
+            "Hypervisor": "xen",
+            "NetworkInterfaces": [
+                {
+                    "Attachment": {
+                        "AttachTime": "2025-09-16T14:33:27+00:00",
+                        "AttachmentId": "eni-attach-02c381bcd94ae011b",
+                        "DeleteOnTermination": true,
+                        "DeviceIndex": 0,
+                        "Status": "attaching",
+                        "NetworkCardIndex": 0
+                    },
+                    "Description": "",
+                    "Groups": [
+                        {
+                            "GroupId": "sg-092e0a16ae764a97b",
+                            "GroupName": "my-sg-cli"
+                        }
+                    ],
+                    "Ipv6Addresses": [],
+                    "MacAddress": "0e:88:fb:69:c5:e7",
+                    "NetworkInterfaceId": "eni-0c6a7ceedd22b609a",
+                    "OwnerId": "767398043565",
+                    "PrivateDnsName": "ip-172-31-40-204.ec2.internal",
+                    "PrivateIpAddress": "172.31.40.204",
+                    "PrivateIpAddresses": [
+                        {
+                            "Primary": true,
+                            "PrivateDnsName": "ip-172-31-40-204.ec2.internal",
+                            "PrivateIpAddress": "172.31.40.204"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Status": "in-use",
+                    "SubnetId": "subnet-068891e9a8dcf511c",
+                    "VpcId": "vpc-0c9a36d29e2f984f5",
+                    "InterfaceType": "interface",
+                    "Operator": {
+                        "Managed": false
+                    }
+                }
+            ],
+            "RootDeviceName": "/dev/xvda",
+            "RootDeviceType": "ebs",
+            "SecurityGroups": [
+                {
+                    "GroupId": "sg-092e0a16ae764a97b",
+                    "GroupName": "my-sg-cli"
+                }
+            ],
+            "SourceDestCheck": true,
+            "StateReason": {
+                "Code": "pending",
+                "Message": "pending"
+            },
+            "VirtualizationType": "hvm",
+            "CpuOptions": {
+                "CoreCount": 1,
+                "ThreadsPerCore": 1
+            },
+            "CapacityReservationSpecification": {
+                "CapacityReservationPreference": "open"
+            },
+            "MetadataOptions": {
+                "State": "pending",
+                "HttpTokens": "required",
+                "HttpPutResponseHopLimit": 2,
+                "HttpEndpoint": "enabled",
+                "HttpProtocolIpv6": "disabled",
+                "InstanceMetadataTags": "disabled"
+            },
+            "EnclaveOptions": {
+                "Enabled": false
+            },
+            "BootMode": "uefi-preferred",
+            "PrivateDnsNameOptions": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "MaintenanceOptions": {
+                "AutoRecovery": "default",
+                "RebootMigration": "default"
+            },
+            "CurrentInstanceBootMode": "legacy-bios",
+            "Operator": {
+                "Managed": false
+            },
+            "InstanceId": "i-00c8394b95029197c",
+            "ImageId": "ami-0b09ffb6d8b58ca91",
+            "State": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "PrivateDnsName": "ip-172-31-40-204.ec2.internal",
+            "PublicDnsName": "",
+            "StateTransitionReason": "",
+            "KeyName": "MyKeyPair",
+            "AmiLaunchIndex": 0,
+            "ProductCodes": [],
+            "InstanceType": "t2.micro",
+            "LaunchTime": "2025-09-16T14:33:27+00:00",
+            "Placement": {
+                "AvailabilityZoneId": "use1-az6",
+                "GroupName": "",
+                "Tenancy": "default",
+                "AvailabilityZone": "us-east-1a"
+            },
+            "Monitoring": {
+                "State": "disabled"
+            },
+            "SubnetId": "subnet-068891e9a8dcf511c",
+            "VpcId": "vpc-0c9a36d29e2f984f5",
+            "PrivateIpAddress": "172.31.40.204"
+        }
+    ]
+}
+
+
+ec2-54-144-27-224.compute-1.amazonaws.com
