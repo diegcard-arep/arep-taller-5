@@ -36,6 +36,8 @@ Aplicación full-stack para administrar propiedades inmobiliarias desarrollada c
 - [Instalación y Ejecución](#-instalación-y-ejecución)
 - [Despliegue en AWS](#️-despliegue-en-aws)
 - [Scripts de Base de Datos](#️-scripts-de-base-de-datos)
+- [Funcionalidades Implementadas](#-funcionalidades-implementadas)
+- [Implementaciones Adicionales](#️-implementaciones-adicionales)
 
 ## 🏗️ Arquitectura del Sistema
 
@@ -480,6 +482,129 @@ SHOW GRANTS FOR 'arep_user'@'%';
 - ✅ **Interfaz Responsiva** - Diseño adaptable a diferentes dispositivos
 - ✅ **Contenedorización** - Aplicación dockerizada para fácil despliegue
 - ✅ **Despliegue en AWS** - Infraestructura en la nube con RDS y EC2
+
+## 🛠️ Implementaciones Adicionales
+
+### 📚 Taller JPA (Spring Data JPA)
+
+Como parte del laboratorio, se implementó un taller adicional de **Spring Data JPA** que demuestra el uso básico de persistencia de datos:
+
+#### Estructura del Taller JPA
+
+```text
+taller-clase/tallerjpa/arep/
+├── src/main/java/escuelaing/edu/co/arep/
+│   ├── AccessingDataJpaApplication.java    # Aplicación principal
+│   ├── Customer.java                       # Entidad JPA
+│   └── CustomerRepository.java             # Repositorio de datos
+```
+
+#### Componentes Implementados
+
+1. **Entidad Customer** (`Customer.java`)
+
+```java
+@Entity
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String firstName;
+    private String lastName;
+    
+    // Constructor y métodos...
+}
+```
+
+2. **Repositorio** (`CustomerRepository.java`)
+
+```java
+public interface CustomerRepository extends CrudRepository<Customer, Long> {
+    List<Customer> findByLastName(String lastName);
+    Customer findById(long id);
+}
+```
+
+3. **Aplicación Principal** (`AccessingDataJpaApplication.java`)
+   - Implementa `CommandLineRunner` para demostración
+   - Operaciones CRUD básicas
+   - Consultas personalizadas por apellido
+   - Logging de operaciones
+
+#### Funcionalidades Demostradas
+
+- **Persistencia automática** con H2 en memoria
+- **Operaciones CRUD** básicas (Create, Read, Update, Delete)
+- **Consultas derivadas** (`findByLastName`)
+- **Inyección de dependencias** con Spring Boot
+- **Logging de operaciones** para seguimiento
+
+### ☁️ AWS CLI - Implementación de Infraestructura
+
+Se documentó el proceso completo de configuración de infraestructura AWS usando **AWS CLI**:
+
+#### Scripts y Comandos Implementados
+
+1. **Configuración de Security Groups**
+
+```bash
+# Crear Security Group
+aws ec2 create-security-group --group-name my-sg-cli --description "Security group for AREP lab"
+
+# Autorizar acceso RDP (Puerto 3389)
+aws ec2 authorize-security-group-ingress --group-id sg-092e0a16ae764a97b --protocol tcp --port 3389 --cidr 0.0.0.0/0
+
+# Autorizar acceso SSH (Puerto 22)
+aws ec2 authorize-security-group-ingress --group-id sg-092e0a16ae764a97b --protocol tcp --port 22 --cidr 0.0.0.0/0
+```
+
+2. **Creación de Instancia EC2**
+
+```bash
+# Lanzar instancia EC2
+aws ec2 run-instances \
+    --image-id ami-0b09ffb6d8b58ca91 \
+    --count 1 \
+    --instance-type t2.micro \
+    --key-name MyKeyPair \
+    --security-group-ids sg-092e0a16ae764a97b \
+    --subnet-id subnet-068891e9a8dcf511c
+```
+
+#### Configuración de Infraestructura
+
+- **AMI**: `ami-0b09ffb6d8b58ca91` (Amazon Linux)
+- **Tipo de instancia**: `t2.micro` (Free Tier)
+- **VPC**: `vpc-0c9a36d29e2f984f5`
+- **Subnet**: `subnet-068891e9a8dcf511c`
+- **Security Group**: `sg-092e0a16ae764a97b`
+- **Key Pair**: `MyKeyPair`
+
+#### Resultados del Despliegue
+
+- **Instance ID**: `i-00c8394b95029197c`
+- **DNS público**: `ec2-54-144-27-224.compute-1.amazonaws.com`
+- **IP privada**: `172.31.40.204`
+- **Zona de disponibilidad**: `us-east-1a`
+
+### 🎯 Objetivos de Aprendizaje Alcanzados
+
+1. **Spring Data JPA**
+   - Configuración de entidades JPA
+   - Implementación de repositorios
+   - Consultas personalizadas
+   - Integración con Spring Boot
+
+2. **AWS CLI**
+   - Gestión de Security Groups
+   - Lanzamiento de instancias EC2
+   - Configuración de redes y subnets
+   - Automatización de despliegue
+
+3. **Integración Práctica**
+   - Combinación de desarrollo local y despliegue en nube
+   - Documentación de procesos de infraestructura
+   - Evidencia práctica del funcionamiento
 
 ---
 
