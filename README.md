@@ -486,5 +486,6 @@ SHOW GRANTS FOR 'arep_user'@'%';
 **Desarrollado por:** Diego Cárdenas  
 **Universidad:** Escuela Colombiana de Ingeniería Julio Garavito  
 **Materia:** Arquitecturas Empresariales (AREP)  
-**Año:** 2024 
+**Año:** 2024
+ 
  
