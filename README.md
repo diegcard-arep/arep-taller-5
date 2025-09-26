@@ -487,5 +487,3 @@ SHOW GRANTS FOR 'arep_user'@'%';
 **Universidad:** Escuela Colombiana de Ingeniería Julio Garavito  
 **Materia:** Arquitecturas Empresariales (AREP)  
 **Año:** 2024
- 
- 
